@@ -25,10 +25,25 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:	// Выполняется 1 раз при запуске окна
+	{
+		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
+		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
+		//SetFocus(GetDlgItem(hwnd, ID_EDIT_LOGIN));
+	}
 		break;
 	case WM_COMMAND:	// Обрабатывает комманды с клавиатуры и мыши
 		switch (LOWORD(wParam))
 		{
+		case ID_BUTTON_COPY:
+		{
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE] = {};
+			HWND hEditLogin = GetDlgItem(hwnd, ID_EDIT_LOGIN);
+			HWND hEditPassword = GetDlgItem(hwnd, ID_EDIT_PASSWORD);
+			SendMessage(hEditLogin, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			SendMessage(hEditPassword, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+		}
+			break;
 		case IDOK:
 			MessageBox(NULL, "OK button was pressed", "Info", MB_OK | MB_ICONINFORMATION);
 			break;
