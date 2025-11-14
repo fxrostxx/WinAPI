@@ -1,4 +1,4 @@
-#include <Windows.h>
+п»ї#include <Windows.h>
 #include "resource.h"
 
 //#define MESSAGE_BOX
@@ -27,7 +27,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_INITDIALOG:	// Выполняется 1 раз при запуске окна
+	case WM_INITDIALOG:	// Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ 1 СЂР°Р· РїСЂРё Р·Р°РїСѓСЃРєРµ РѕРєРЅР°
 	{
 		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
 		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
@@ -38,7 +38,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SendMessage(hEditPassword, WM_SETTEXT, 0, (LPARAM)sz_password_placeholder);
 	}
 	break;
-	case WM_COMMAND:	// Обрабатывает комманды с клавиатуры и мыши
+	case WM_COMMAND:	// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РєРѕРјРјР°РЅРґС‹ СЃ РєР»Р°РІРёР°С‚СѓСЂС‹ Рё РјС‹С€Рё
 		switch (LOWORD(wParam))
 		{
 		case ID_BUTTON_COPY:
@@ -83,7 +83,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
-	case WM_CLOSE:		// Выполняется при нажатии кнопки закрытия окна
+	case WM_CLOSE:		// Р’С‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё Р·Р°РєСЂС‹С‚РёСЏ РѕРєРЅР°
 		EndDialog(hwnd, 0);
 		break;
 	}
