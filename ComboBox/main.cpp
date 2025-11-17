@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include "resource.h"
 
 const CHAR* g_sz_VALUES[] = { "This", "is", "my", "first", "Combo", "Box" };
