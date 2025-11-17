@@ -3,8 +3,8 @@
 
 //#define MESSAGE_BOX
 
-const char sz_login_placeholder[] = "Enter login";
-const char sz_password_placeholder[] = "Enter password";
+CONST CHAR sz_login_placeholder[] = "Enter login";
+CONST CHAR sz_password_placeholder[] = "Enter password";
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
