@@ -1,7 +1,8 @@
 ﻿#include <Windows.h>
+#include <stdio.h>
 #include "resource.h"
 
-const CHAR* g_sz_VALUES[] = { "This", "is", "my", "first", "Combo", "Box" };
+CONST CHAR* g_sz_VALUES[] = { "This", "is", "my", "first", "Combo", "Box" };
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -26,7 +27,21 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (LOWORD(wParam))
 		{
 		case IDOK:
-			break;
+		{
+			HWND hCombo = GetDlgItem(hwnd, IDC_COMBO1);
+			INT INDEX = SendMessage(hCombo, CB_GETCURSEL, 0, 0);
+			if (INDEX != CB_ERR)
+			{
+				CONST INT SIZE = 256;
+				CHAR g_sz_CURRENT_VALUE[SIZE] = {};
+				CHAR MESSAGE[SIZE] = {};
+				SendMessage(hCombo, CB_GETLBTEXT, INDEX, (LPARAM)g_sz_CURRENT_VALUE);
+				sprintf_s(MESSAGE, "You selected item № %d \"%s\"", INDEX, g_sz_CURRENT_VALUE);
+				MessageBox(NULL, MESSAGE, "Info", MB_OK | MB_ICONINFORMATION);
+			}
+			else MessageBox(NULL, "Item is not selected", "Info", MB_OK | MB_ICONINFORMATION);
+		}
+		break;
 		case IDCANCEL:
 			EndDialog(hwnd, 0);
 			break;
