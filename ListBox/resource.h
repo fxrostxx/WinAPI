@@ -4,8 +4,9 @@
 //
 #define IDADD                           3
 #define IDREMOVE                        4
-#define IDD_DIALOG1                     101
-#define IDD_DIALOG2                     103
+#define IDDELETE                        4
+#define IDD_DIALOG_MAIN                 101
+#define IDD_DIALOG_ADD                  103
 #define IDC_LIST1                       1001
 #define IDC_EDIT1                       1002
 
