@@ -61,39 +61,29 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDCANCEL:
 			EndDialog(hwnd, 0);
 			break;
+		case IDC_LIST1:
+		{
+			if (HIWORD(wParam) == LBN_DBLCLK)
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD), hwnd, (DLGPROC)DlgProcEdit, 0);
+		}
+		break;
 		}
 		break;
 	case WM_CLOSE:
 		EndDialog(hwnd, 0);
 		break;
-	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_RETURN:
+	/*case WM_KEYUP:
+		if (wParam == VK_RETURN)
 		{
 			HWND hList = GetDlgItem(hwnd, IDC_LIST1);
 			INT i = SendMessage(hList, LB_GETCURSEL, 0, 0);
 			if (i != LB_ERR)
 			{
-				HINSTANCE hInstance = GetModuleHandle(NULL);
-				DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG_EDIT), hwnd, (DLGPROC)DlgProcEdit, 0);
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD), hwnd, (DLGPROC)DlgProcEdit, 0);
 			}
 			else MessageBox(hwnd, "Select item to edit", "Warning", MB_OK | MB_ICONWARNING);
 		}
-		break;
-		}
-		break;
-	case WM_NCLBUTTONDBLCLK:
-	{
-		HWND hList = GetDlgItem(hwnd, IDC_LIST1);
-		INT i = SendMessage(hList, LB_GETCURSEL, 0, 0);
-		if (i != LB_ERR)
-		{
-			HINSTANCE hInstance = GetModuleHandle(NULL);
-			DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG_EDIT), hwnd, (DLGPROC)DlgProcEdit, 0);
-		}
-	}
-	break;
+		break;*/
 	}
 	return FALSE;
 }
@@ -118,10 +108,13 @@ BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (strlen(sz_buffer))
 			{
 				if (SendMessage(hList, LB_FINDSTRINGEXACT, 0, (LPARAM)sz_buffer) == LB_ERR)
+				{
 					SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)sz_buffer);
+					EndDialog(hwnd, 0);
+				}
 				else MessageBox(hwnd, "This element already exists", "Warning", MB_OK | MB_ICONWARNING);
 			}
-			EndDialog(hwnd, IDOK);
+			else MessageBox(hwnd, "Enter text", "Warning", MB_OK | MB_ICONWARNING);
 		}
 		break;
 		case IDCANCEL:
@@ -141,6 +134,7 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 	{
+		SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)"Изменить");
 		CONST INT SIZE = 256;
 		CHAR sz_buffer[SIZE] = {};
 		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT1);
@@ -149,7 +143,8 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		INT i = SendMessage(hList, LB_GETCURSEL, 0, 0);
 		SendMessage(hList, LB_GETTEXT, i, (LPARAM)sz_buffer);
 		SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
-		SetFocus(GetDlgItem(hwnd, IDC_EDIT1));
+		SetFocus(hEdit);
+		SendMessage(hEdit, EM_SETSEL, strlen(sz_buffer), -1);
 	}
 	break;
 	case WM_COMMAND:
@@ -163,17 +158,18 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
 			HWND hParent = GetParent(hwnd);
 			HWND hList = GetDlgItem(hParent, IDC_LIST1);
+			INT i = SendMessage(hList, LB_GETCURSEL, 0, 0);
 			if (strlen(sz_buffer))
 			{
 				if (SendMessage(hList, LB_FINDSTRINGEXACT, 0, (LPARAM)sz_buffer) == LB_ERR)
 				{
-					INT i = SendMessage(hList, LB_GETCURSEL, 0, 0);
 					SendMessage(hList, LB_DELETESTRING, i, 0);
 					SendMessage(hList, LB_INSERTSTRING, i, (LPARAM)sz_buffer);
+					EndDialog(hwnd, 0);
 				}
 				else MessageBox(hwnd, "This element already exists", "Warning", MB_OK | MB_ICONWARNING);
 			}
-			EndDialog(hwnd, IDOK);
+			else MessageBox(hwnd, "Enter text", "Warning", MB_OK | MB_ICONWARNING);
 		}
 		break;
 		case IDCANCEL:

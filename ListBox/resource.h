@@ -7,7 +7,6 @@
 #define IDDELETE                        4
 #define IDD_DIALOG_MAIN                 101
 #define IDD_DIALOG_ADD                  103
-#define IDD_DIALOG_EDIT                 104
 #define IDC_LIST1                       1001
 #define IDC_EDIT1                       1002
 
