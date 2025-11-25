@@ -134,7 +134,7 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 	{
-		SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)"Изменить");
+		SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)"Edit");
 		CONST INT SIZE = 256;
 		CHAR sz_buffer[SIZE] = {};
 		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT1);
