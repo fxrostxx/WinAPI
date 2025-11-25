@@ -165,6 +165,7 @@ BOOL CALLBACK DlgProcEdit(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 					SendMessage(hList, LB_DELETESTRING, i, 0);
 					SendMessage(hList, LB_INSERTSTRING, i, (LPARAM)sz_buffer);
+					SendMessage(hList, LB_SETCURSEL, i, 0);
 					EndDialog(hwnd, 0);
 				}
 				else MessageBox(hwnd, "This element already exists", "Warning", MB_OK | MB_ICONWARNING);
