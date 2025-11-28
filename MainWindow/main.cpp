@@ -1,9 +1,11 @@
 ﻿#include <Windows.h>
+#include <string>
 #include "resource.h"
 
 CONST CHAR g_sz_WINDOW_CLASS[] = "My first window";
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+VOID UpdateWindowTitle(HWND hwnd);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -30,14 +32,24 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 		return 0;
 	}
 
+	RECT screenRect;
+	CONST DOUBLE scale = 0.75;
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
+	INT screenWidth = screenRect.right - screenRect.left;
+	INT screenHeight = screenRect.bottom - screenRect.top;
+	INT windowWidth = screenWidth * scale;
+	INT windowHeight = screenHeight * scale;
+	INT windowX = (screenWidth - windowWidth) / 2;
+	INT windowY = (screenHeight - windowHeight) / 2;
+
 	HWND hwnd = CreateWindowEx
 	(
 		NULL,
 		g_sz_WINDOW_CLASS,
 		g_sz_WINDOW_CLASS,
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		640, 480,
+		windowX, windowY,
+		windowWidth, windowHeight,
 		NULL,
 		NULL,
 		hInstance,
@@ -64,8 +76,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:
+		UpdateWindowTitle(hwnd);
 		break;
 	case WM_COMMAND:
+		break;
+	case WM_MOVE:
+		UpdateWindowTitle(hwnd);
+		break;
+	case WM_SIZE:
+		UpdateWindowTitle(hwnd);
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
@@ -78,4 +97,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return FALSE;
+}
+VOID UpdateWindowTitle(HWND hwnd)
+{
+	RECT windowRect;
+	GetWindowRect(hwnd, &windowRect);
+	std::string windowTitle =
+		"Position: " + std::to_string(windowRect.left) + "x" + std::to_string(windowRect.top) +
+		" | Size: " + std::to_string(windowRect.right - windowRect.left) + "x" + std::to_string(windowRect.bottom - windowRect.top);
+	SetWindowText(hwnd, windowTitle.c_str());
 }
