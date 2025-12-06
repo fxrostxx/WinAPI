@@ -1,8 +1,13 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 
+//#define DEBUG
+
 #include <Windows.h>
-#include <iostream>
 #include "resource.h"
+#ifdef DEBUG
+#include <iostream>
+#endif // DEBUG
+
 
 CONST CHAR g_sz_WINDOW_CLASS[] = "Calc";
 
@@ -79,8 +84,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
+#ifdef DEBUG
 		AllocConsole();
 		freopen("CONOUT$", "w", stdout);
+#endif // DEBUG
 		CreateWindowEx
 		(
 			NULL,
@@ -188,6 +195,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_COMMAND:
 	{
+		SetFocus(hwnd);
 		HWND hEdit = GetDlgItem(hwnd, IDC_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_digit[2] = {};
@@ -303,7 +311,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_DESTROY:
+#ifdef DEBUG
 		FreeConsole();
+#endif // DEBUG
 		PostQuitMessage(0);
 		break;
 	case WM_CLOSE:
