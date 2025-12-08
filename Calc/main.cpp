@@ -205,7 +205,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HWND hEdit = GetDlgItem(hwnd, IDC_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_digit[2] = {};
-		static CHAR sz_buffer[SIZE] = {};
+		CHAR sz_buffer[SIZE] = {};
 		SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
 		if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)
 		{
@@ -215,10 +215,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				input_operation = FALSE;
 			}
 			sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + '0';
-			if (!strcmp(sz_buffer, "0") || !strcmp(sz_buffer, "Error"))
-			{
-				strcpy(sz_buffer, sz_digit);
-			}
+			if (!strcmp(sz_buffer, "0") || !strcmp(sz_buffer, "Error")) strcpy(sz_buffer, sz_digit);
 			else lstrcat(sz_buffer, sz_digit);
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
 			input = TRUE;
@@ -226,6 +223,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_POINT)
 		{
+			if (input_operation)
+			{
+				sz_buffer[0] = '0';
+				sz_buffer[1] = '.';
+				sz_buffer[2] = {};
+				input_operation = FALSE;
+			}
 			if (!strchr(sz_buffer, '.'))
 			{
 				if (!strcmp(sz_buffer, "Error"))
@@ -235,10 +239,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				else strcat(sz_buffer, ".");
 			}
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			input = TRUE;
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_BSP)
 		{
 			if (!strcmp(sz_buffer, "Error")) strcpy(sz_buffer, "0");
+			else if (!input) break;
 			if (strlen(sz_buffer) == 1) sz_buffer[0] = '0';
 			else sz_buffer[strlen(sz_buffer) - 1] = {};
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
@@ -248,7 +254,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			a = b = DBL_MIN;
 			operation = 0;
 			input = input_operation = FALSE;
-			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)"0");
 		}
 		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
 		{
@@ -270,12 +276,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				else b = atof(sz_buffer);
 				input = FALSE;
 			}
+			if (b == DBL_MIN) break;
 			switch (operation)
 			{
 			case IDC_BUTTON_PLUS: a += b; break;
 			case IDC_BUTTON_MINUS: a -= b; break;
 			case IDC_BUTTON_ASTER: a *= b; break;
-			case IDC_BUTTON_SLASH: a /= b; break;
+			case IDC_BUTTON_SLASH:
+				if (b) a /= b;
+				else
+				{
+					strcpy(sz_buffer, "Error");
+					a = b = DBL_MIN;
+					operation = 0;
+					input = input_operation = FALSE;
+					SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+					return FALSE;
+				}
+				break;
 			}
 			input_operation = FALSE;
 			sprintf(sz_buffer, "%g", a);
