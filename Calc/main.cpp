@@ -4,6 +4,7 @@
 
 #include <Windows.h>
 #include <stdio.h>
+#include <float.h>
 #include "resource.h"
 #ifdef DEBUG
 #include <iostream>
@@ -196,36 +197,40 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_COMMAND:
 	{
+		static DOUBLE a = DBL_MIN, b = DBL_MIN;
+		static INT operation = 0;
+		static BOOL input = FALSE;
+		static BOOL input_operation = FALSE;
 		SetFocus(hwnd);
 		HWND hEdit = GetDlgItem(hwnd, IDC_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_digit[2] = {};
-		static CHAR sz_operator = {};
 		static CHAR sz_buffer[SIZE] = {};
-		static CHAR sz_first_num[SIZE] = {};
-		static CHAR sz_result[SIZE] = {};
-		static BOOL b_wait_for_second_num = FALSE;
-		static BOOL b_new_operation = TRUE;
 		SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
 		if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)
 		{
+			if (input_operation)
+			{
+				sz_buffer[0] = {};
+				input_operation = FALSE;
+			}
 			sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + '0';
-			if (!strcmp(sz_buffer, "0") || !strcmp(sz_buffer, "Error") || b_wait_for_second_num || b_new_operation)
+			if (!strcmp(sz_buffer, "0") || !strcmp(sz_buffer, "Error"))
 			{
 				strcpy(sz_buffer, sz_digit);
-				b_wait_for_second_num = b_new_operation = FALSE;
 			}
 			else lstrcat(sz_buffer, sz_digit);
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			input = TRUE;
+			input_operation = FALSE;
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_POINT)
 		{
 			if (!strchr(sz_buffer, '.'))
 			{
-				if (!strcmp(sz_buffer, "Error") || b_wait_for_second_num || b_new_operation)
+				if (!strcmp(sz_buffer, "Error"))
 				{
 					strcpy(sz_buffer, "0.");
-					b_wait_for_second_num = b_new_operation = FALSE;
 				}
 				else strcat(sz_buffer, ".");
 			}
@@ -233,98 +238,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_BSP)
 		{
-			if (!strcmp(sz_buffer, "Error") || b_new_operation) strcpy(sz_buffer, "0");
+			if (!strcmp(sz_buffer, "Error")) strcpy(sz_buffer, "0");
 			if (strlen(sz_buffer) == 1) sz_buffer[0] = '0';
 			else sz_buffer[strlen(sz_buffer) - 1] = {};
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_CLR)
 		{
-			strcpy(sz_buffer, "0");
-			sz_operator = {};
-			strcpy(sz_first_num, "");
-			strcpy(sz_result, "");
-			b_wait_for_second_num = FALSE;
-			b_new_operation = TRUE;
+			a = b = DBL_MIN;
+			operation = 0;
+			input = input_operation = FALSE;
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
 		}
 		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
 		{
-			if (sz_operator && !b_wait_for_second_num && !b_new_operation)
+			if (input)
 			{
-				DOUBLE d_first_num = atof(sz_first_num);
-				DOUBLE d_second_num = atof(sz_buffer);
-				DOUBLE d_result = {};
-				switch (sz_operator)
-				{
-				case '+': d_result = d_first_num + d_second_num; break;
-				case '-': d_result = d_first_num - d_second_num; break;
-				case '*': d_result = d_first_num * d_second_num; break;
-				case '/':
-					if (d_second_num) d_result = d_first_num / d_second_num;
-					else
-					{
-						strcpy(sz_buffer, "Error");
-						sz_operator = {};
-						strcpy(sz_first_num, "");
-						b_wait_for_second_num = FALSE;
-						b_new_operation = TRUE;
-						SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
-						return FALSE;
-					}
-					break;
-				}
-				sprintf(sz_result, "%g", d_result);
-				strcpy(sz_buffer, sz_result);
-				strcpy(sz_first_num, sz_result);
-				SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+				if (a == DBL_MIN) a = atof(sz_buffer);
+				else b = atof(sz_buffer);
+				input = FALSE;
 			}
-			else strcpy(sz_first_num, sz_buffer);
-			switch (LOWORD(wParam))
-			{
-			case IDC_BUTTON_PLUS: sz_operator = '+'; break;
-			case IDC_BUTTON_MINUS: sz_operator = '-'; break;
-			case IDC_BUTTON_ASTER: sz_operator = '*'; break;
-			case IDC_BUTTON_SLASH: sz_operator = '/'; break;
-			}
-			b_wait_for_second_num = TRUE;
-			b_new_operation = FALSE;
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			operation = LOWORD(wParam);
+			input_operation = TRUE;
 		}
 		if (LOWORD(wParam) == IDC_BUTTON_EQUAL)
 		{
-			if (sz_operator && strlen(sz_first_num) && !b_new_operation)
+			if (input)
 			{
-				DOUBLE d_first_num = atof(sz_first_num);
-				DOUBLE d_second_num = atof(sz_buffer);
-				DOUBLE d_result = {};
-				switch (sz_operator)
-				{
-				case '+': d_result = d_first_num + d_second_num; break;
-				case '-': d_result = d_first_num - d_second_num; break;
-				case '*': d_result = d_first_num * d_second_num; break;
-				case '/':
-					if (d_second_num) d_result = d_first_num / d_second_num;
-					else
-					{
-						strcpy(sz_buffer, "Error");
-						sz_operator = {};
-						strcpy(sz_first_num, "");
-						strcpy(sz_result, "");
-						b_wait_for_second_num = FALSE;
-						b_new_operation = TRUE;
-						SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
-						return FALSE;
-					}
-					break;
-				}
-				sprintf(sz_result, "%g", d_result);
-				strcpy(sz_buffer, sz_result);
-				strcpy(sz_first_num, sz_result);
-				sz_operator = {};
-				b_wait_for_second_num = FALSE;
-				b_new_operation = TRUE;
-				SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+				if (a == DBL_MIN) a = atof(sz_buffer);
+				else b = atof(sz_buffer);
+				input = FALSE;
 			}
+			switch (operation)
+			{
+			case IDC_BUTTON_PLUS: a += b; break;
+			case IDC_BUTTON_MINUS: a -= b; break;
+			case IDC_BUTTON_ASTER: a *= b; break;
+			case IDC_BUTTON_SLASH: a /= b; break;
+			}
+			input_operation = FALSE;
+			sprintf(sz_buffer, "%g", a);
+			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer);
 		}
 	}
 	break;
