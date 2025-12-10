@@ -397,6 +397,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 	}
 	break;
+	case WM_CONTEXTMENU:
+	{
+		HMENU cmMain = CreatePopupMenu();
+		AppendMenu(cmMain, MF_STRING, IDM_SQUARE_BLUE, "Square blue");
+		AppendMenu(cmMain, MF_STRING, IDM_METAL_MISTRAL, "Metal mistral");
+		AppendMenu(cmMain, MF_SEPARATOR, NULL, NULL);
+		AppendMenu(cmMain, MF_STRING, IDM_EXIT, "Exit");
+		BOOL selected_item = TrackPopupMenu
+		(
+			cmMain,
+			TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON | TPM_VERNEGANIMATION,
+			LOWORD(lParam), HIWORD(lParam),
+			0,
+			hwnd,
+			NULL
+		);
+		switch (selected_item)
+		{
+		case IDM_SQUARE_BLUE: SetSkin(hwnd, "square_blue"); break;
+		case IDM_METAL_MISTRAL: SetSkin(hwnd, "metal_mistral"); break;
+		case IDM_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
+		}
+		DestroyMenu(cmMain);
+	}
+	break;
 	case WM_DESTROY:
 #ifdef DEBUG
 		FreeConsole();
@@ -427,6 +452,22 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 			IMAGE_BITMAP,
 			i == 0 ? g_i_DOUBLE_BUTTON_SIZE : g_i_BUTTON_SIZE,
 			g_i_BUTTON_SIZE,
+			LR_LOADFROMFILE
+		);
+		SendMessage(hButton, BM_SETIMAGE, 0, (LPARAM)bmpButton);
+	}
+	CONST CHAR* button_name[] = {"point", "plus", "minus", "aster", "slash", "bsp", "clr", "equal"};
+	for (int i = 0; i < 8; ++i)
+	{
+		sprintf(sz_filename, "Buttons\\%s\\button_%s.bmp", skin, button_name[i]);
+		HWND hButton = GetDlgItem(hwnd, IDC_BUTTON_POINT + i);
+		HBITMAP bmpButton = (HBITMAP)LoadImage
+		(
+			GetModuleHandle(NULL),
+			sz_filename,
+			IMAGE_BITMAP,
+			g_i_BUTTON_SIZE,
+			i == IDC_BUTTON_EQUAL - IDC_BUTTON_POINT ? g_i_DOUBLE_BUTTON_SIZE : g_i_BUTTON_SIZE,
 			LR_LOADFROMFILE
 		);
 		SendMessage(hButton, BM_SETIMAGE, 0, (LPARAM)bmpButton);
