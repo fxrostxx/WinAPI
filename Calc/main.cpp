@@ -30,6 +30,7 @@ CONST INT g_i_WINDOW_HEIGHT = g_i_DISPLAY_HEIGHT + g_i_START_Y + (g_i_BUTTON_SIZ
 #define Y_BUTTON_POSITION(position) g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (position)
 
 CONST CHAR g_OPERATIONS[] = "+-*/";
+COLORREF g_BG_COLOR = RGB(0, 66, 128);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
@@ -422,6 +423,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyMenu(cmMain);
 	}
 	break;
+	case WM_ERASEBKGND:
+	{
+		HDC hdc = (HDC)wParam;
+		RECT rect;
+		GetClientRect(hwnd, &rect);
+		HBRUSH hBrush = CreateSolidBrush(g_BG_COLOR);
+		FillRect(hdc, &rect, hBrush);
+		DeleteObject(hBrush);
+	}
+	break;
 	case WM_DESTROY:
 #ifdef DEBUG
 		FreeConsole();
@@ -472,4 +483,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 		);
 		SendMessage(hButton, BM_SETIMAGE, 0, (LPARAM)bmpButton);
 	}
+	if (!strcmp(skin, "square_blue")) g_BG_COLOR = RGB(0, 66, 128);
+	else if (!strcmp(skin, "metal_mistral")) g_BG_COLOR = RGB(161, 157, 147);
+	InvalidateRect(hwnd, NULL, TRUE);
 }
