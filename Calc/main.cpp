@@ -275,8 +275,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				if (a == DBL_MIN) a = atof(sz_buffer);
 				else b = atof(sz_buffer);
 				input = FALSE;
+				SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
 			}
-			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
 			operation = LOWORD(wParam);
 			input_operation = TRUE;
 		}
@@ -467,7 +467,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 		);
 		SendMessage(hButton, BM_SETIMAGE, 0, (LPARAM)bmpButton);
 	}
-	CONST CHAR* button_name[] = {"point", "plus", "minus", "aster", "slash", "bsp", "clr", "equal"};
+	CONST CHAR* button_name[] = { "point", "plus", "minus", "aster", "slash", "bsp", "clr", "equal" };
 	for (int i = 0; i < 8; ++i)
 	{
 		sprintf(sz_filename, "Buttons\\%s\\button_%s.bmp", skin, button_name[i]);
