@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7C910A5092774822ACF0E5060875B84A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BD012C58B1B04916AC08F9B79516E629"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -152,6 +158,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C910A5092774822ACF0E5060875B84A"
+            {
+            "SourcePath" = "8:..\\Calc\\icon.ico"
+            "TargetName" = "8:icon.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_F3454C8F2F8C4DE3A62FF693745A7713"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BD012C58B1B04916AC08F9B79516E629"
             {
             "SourcePath" = "8:..\\x64\\Debug\\Calc.exe"
@@ -221,6 +247,17 @@
                         {
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_F3454C8F2F8C4DE3A62FF693745A7713"
+                    {
+                    "Name" = "8:Icon"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_C57183F15C4C4C33BA820148DD2E5595"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -240,7 +277,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Calc"
         "ProductCode" = "8:{8EF6C8F4-202A-4A38-88CF-39C0247392D7}"
-        "PackageCode" = "8:{9710995A-1E8A-4ED7-995B-B32AD09C088A}"
+        "PackageCode" = "8:{8B5029E9-E4C5-43AF-8374-986B31104F6B}"
         "UpgradeCode" = "8:{1A0A77AB-052F-4495-B5E2-1E3CB9365A3F}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -257,7 +294,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:Basic WinAPI calculator"
         "ARPURLINFOABOUT" = "8:https://github.com/fxrostxx"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_7C910A5092774822ACF0E5060875B84A"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -371,7 +408,7 @@
             "Target" = "8:_BD012C58B1B04916AC08F9B79516E629"
             "Folder" = "8:_4BA21BE0BA414B42AAB4A442395E3298"
             "WorkingFolder" = "8:_4BA21BE0BA414B42AAB4A442395E3298"
-            "Icon" = "8:"
+            "Icon" = "8:_7C910A5092774822ACF0E5060875B84A"
             "Feature" = "8:"
             }
         }
